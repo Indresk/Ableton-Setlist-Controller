@@ -1,23 +1,34 @@
 import { EVENTS } from '../../../../packages/shared/events.js';
-import { play, stop, setTempo } from '../services/ableton.service.js';
+import { play, stop, setTempo } from '../services/ableton/ableton.service.js';
 import { getState } from '../state/ableton.state.js';
+import {
+	ABLETON_EVENTS,
+	abletonEventManager,
+} from '../events/ableton.events.js';
 
 export const registerAbletonHandlers = (io, socket) => {
 	// Enviar estado inicial
 	socket.emit(EVENTS.SERVER.STATE_UPDATE, getState());
 
-	socket.on(EVENTS.CLIENT.PLAY, async () => {
+	// Eventos de acuerdo a lo que llegue del cliente
+	socket.on(EVENTS.CLIENT.PLAY, async (ack) => {
 		await play();
-		io.emit(EVENTS.SERVER.STATE_UPDATE, getState());
+		ack?.({ ok: true });
 	});
 
-	socket.on(EVENTS.CLIENT.STOP, async () => {
+	socket.on(EVENTS.CLIENT.STOP, async (ack) => {
 		await stop();
-		io.emit(EVENTS.SERVER.STATE_UPDATE, getState());
+		ack?.({ ok: true });
 	});
 
-	socket.on(EVENTS.CLIENT.SET_TEMPO, async (tempo) => {
+	socket.on(EVENTS.CLIENT.SET_TEMPO, async (tempo, ack) => {
 		await setTempo(tempo);
-		io.emit(EVENTS.SERVER.STATE_UPDATE, getState());
+		ack?.({ ok: true });
+	});
+};
+
+export const registerAbletonBroadcaster = (io) => {
+	abletonEventManager.on(ABLETON_EVENTS.STATE_CHANGE, (state) => {
+		io.emit(EVENTS.SERVER.STATE_UPDATE, state);
 	});
 };

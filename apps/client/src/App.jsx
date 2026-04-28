@@ -1,17 +1,16 @@
-import { useState } from 'react';
-import Test from './components/Test';
+import ControlsBar from './components/ControlsBar';
+import { Routes, Route } from 'react-router';
+import CurrentSongView from './views/CurrentSongView';
+import SongOrderView from './views/SongsOrderView';
 
 function App() {
-	const [count, setCount] = useState(0);
-
 	return (
 		<>
-			<Test />
-			<button
-				className='counter'
-				onClick={() => setCount((count) => count + 1)}>
-				Count is {count}
-			</button>
+			<Routes>
+				<Route path='/' element={<CurrentSongView />} />
+				<Route path='/order' element={<SongOrderView />} />
+			</Routes>
+			<ControlsBar />
 		</>
 	);
 }

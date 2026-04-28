@@ -11,8 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-/testing-project Project
-/AbletonJS
+/additional-tools
 
 # Editor directories and files
 .vscode/*

@@ -1,0 +1,17 @@
+button {
+	text-transform: capitalize;
+	&.play {
+		background-color: green;
+		&.active,
+		&:hover {
+			background-color: greenyellow;
+		}
+	}
+	&.stop {
+		background-color: brown;
+		&:hover,
+		&:active {
+			background-color: red;
+		}
+	}
+}

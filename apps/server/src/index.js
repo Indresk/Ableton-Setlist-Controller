@@ -1,7 +1,7 @@
 import { createServer } from 'http';
 import app from './app.js';
 import { initSockets } from './sockets/index.js';
-import { initAbleton } from './services/ableton.service.js';
+import { initAbleton } from './services/ableton/boot.service.js';
 
 const server = createServer(app);
 

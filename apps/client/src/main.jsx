@@ -4,13 +4,17 @@ import App from './App.jsx';
 import { socket } from './socket/socket.js';
 import { useAbletonStore } from './store/abletonStore.js';
 import { EVENTS } from '../../../packages/shared/events.js';
+import { BrowserRouter } from 'react-router';
 
 socket.on(EVENTS.SERVER.STATE_UPDATE, (state) => {
-	useAbletonStore.getState().setState(state);
+	// console.log(state);
+	useAbletonStore.setState(state);
 });
 
 createRoot(document.getElementById('root')).render(
-	<StrictMode>
+	// <StrictMode>
+	<BrowserRouter>
 		<App />
-	</StrictMode>,
+	</BrowserRouter>,
+	// </StrictMode>,
 );

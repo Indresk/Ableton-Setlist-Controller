@@ -1,0 +1,8 @@
+.control-bar {
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	width: 100dvw;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+}
