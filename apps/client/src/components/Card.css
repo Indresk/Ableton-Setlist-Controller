@@ -1,0 +1,26 @@
+.card {
+	background-color: var(--color-secondary);
+	border-radius: 10px;
+	height: 40px;
+	border: solid 2px var(--color-border);
+	overflow: hidden;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.dragging {
+	> .card {
+		border-color: greenyellow;
+	}
+}
+
+.draggeable {
+	cursor: grab;
+}
+
+.active {
+	> .card {
+		background-color: var(--color-border);
+	}
+}

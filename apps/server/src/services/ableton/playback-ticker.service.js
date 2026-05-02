@@ -1,4 +1,6 @@
+import { setState } from '../../state/ableton.state.js';
 import { getArregementPosition } from './listeners.service.js';
+import { playlistSeter } from './playlist.service.js';
 import { patchAbletonState } from './state-publisher.service.js';
 let timePollingId = null;
 
@@ -8,13 +10,10 @@ export const startTimePolling = () => {
 	timePollingId = setInterval(() => {
 		let latestTime = getArregementPosition();
 
-		// const playbackContext = resolvePlaybackContext(latestTime);
-
-		patchAbletonState({
+		setState({
 			time: latestTime,
-			//   ...playbackContext,
 		});
-	}, 1000);
+	}, 500);
 };
 
 export const stopTimePolling = () => {

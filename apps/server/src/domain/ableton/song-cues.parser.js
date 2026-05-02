@@ -9,6 +9,11 @@ export const parseSongsFromCuePoints = (cuePoints) => {
 
 	for (const cue of cuePoints) {
 		if (cue.name === SONG_END) {
+			innerCues.unshift({
+				id: currentSong.id,
+				name: 'song start',
+				time: currentSong.start,
+			});
 			if (currentSong) {
 				songs.push({
 					...currentSong,

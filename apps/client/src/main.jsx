@@ -5,6 +5,7 @@ import { socket } from './socket/socket.js';
 import { useAbletonStore } from './store/abletonStore.js';
 import { EVENTS } from '../../../packages/shared/events.js';
 import { BrowserRouter } from 'react-router';
+import './index.css';
 
 socket.on(EVENTS.SERVER.STATE_UPDATE, (state) => {
 	// console.log(state);

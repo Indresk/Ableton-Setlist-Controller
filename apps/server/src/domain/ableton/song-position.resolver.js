@@ -1,5 +1,13 @@
 export const findCurrentSong = (songs, time) => {
-	return songs.find((song) => time >= song.start && time < song.end) ?? null;
+	let index = null;
+	const findedSong =
+		songs.find((song, i) => {
+			if (time >= song.start && time < song.end) {
+				index = i;
+				return song;
+			}
+		}) ?? null;
+	return { ...findedSong, index };
 };
 
 export const findCurrentSection = (sections = [], time) => {
@@ -9,7 +17,7 @@ export const findCurrentSection = (sections = [], time) => {
 
 		const sectionEnd = next ? next.time : Infinity;
 		if (time >= current.time && time < sectionEnd) {
-			return current;
+			return { ...current, index: i };
 		}
 	}
 
@@ -22,9 +30,11 @@ export const resolvePlaybackContext = (songs, time) => {
 		? findCurrentSection(currentSong.sections, time)
 		: null;
 
+	const sectionIndex = currentSection?.index ?? null;
 	return {
 		currentSong: currentSong?.name ?? null,
-		currentSongId: currentSong?.id ?? null,
+		currentSongIndex: currentSong?.index ?? null,
 		currentSection: currentSection?.name ?? null,
+		currentSectionIndex: sectionIndex,
 	};
 };

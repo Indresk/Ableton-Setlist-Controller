@@ -4,8 +4,9 @@ export const useAbletonStore = create((set) => ({
 	isPlaying: false,
 	tempo: 120,
 	songsCue: [],
-	time: 0,
 	currentSong: 0,
+	currentSection: 0,
+	time: 0,
 
 	setState: (newState) => set(newState),
 }));

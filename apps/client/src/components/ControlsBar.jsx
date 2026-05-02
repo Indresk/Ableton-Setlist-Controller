@@ -13,7 +13,7 @@ export default function ControlsBar() {
 			<InfoPannel />
 
 			<PlayButton
-				onClick={() => socket.emit(EVENTS.CLIENT.PLAY)}
+				onClick={() => socket.emit(EVENTS.CLIENT.CONTINUE)}
 				behavior='play'
 				state={isPlaying}
 			/>

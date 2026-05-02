@@ -3,22 +3,18 @@ import {
 	startTimePolling,
 	stopTimePolling,
 } from './playback-ticker.service.js';
+import { playlistPlayer, playlistSeter } from './playlist.service.js';
 import { patchAbletonState } from './state-publisher.service.js';
 
 let isBound = false;
-let lastPublishedAt = 0;
 let arragementPosition = 0;
-let needsFreshArrangementPosition = false;
-// let isPlaying = false;
 
 // Handlers de listener
 
 const handleIsPlaying = (val) => {
-	// isPlaying = val;
 	patchAbletonState({ isPlaying: val });
 
 	if (val) {
-		needsFreshArrangementPosition = true;
 		startTimePolling();
 	} else {
 		stopTimePolling();
@@ -30,18 +26,9 @@ const handleTempo = (val) => {
 };
 
 const handleArragenmentPosition = (time) => {
-	const now = Date.now();
-	if (needsFreshArrangementPosition) {
-		arragementPosition = time;
-		needsFreshArrangementPosition = false;
-		lastPublishedAt = now;
-		return;
-	}
-
-	if (now - lastPublishedAt >= 250) {
-		lastPublishedAt = now;
-		arragementPosition = time;
-	}
+	playlistSeter(time);
+	playlistPlayer(time);
+	arragementPosition = time;
 };
 
 export const getArregementPosition = () => arragementPosition;
