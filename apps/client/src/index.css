@@ -7,11 +7,31 @@
 }
 
 :root {
-	--color-background: hsl(120, 78%, 4%);
-	--color-primary: hsl(120, 78%, 8%);
-	--color-secondary: hsl(120, 78%, 12%);
-	--color-accent: hsl(120, 78%, 15%);
-	--color-border: hsl(120, 78%, 19%);
+	/* Fondos */
+	--color-bg: #060c06;
+	--color-surface: #0e1c0e;
+	--color-surface-2: #162a16;
+
+	/* Bordes */
+	--color-border: #1e3d1e;
+	--color-border-2: #2d6329;
+
+	/* Estados visuales */
+	--color-playing: #a3e635; /* lime — play activo */
+	--color-current: #facc15; /* amber — canción en curso */
+	--color-section: #38bdf8; /* sky — sección activa */
+	--color-stop: #f87171; /* red — stop */
+
+	/* Texto */
+	--color-text: #f0faf0;
+	--color-text-2: #86efac;
+	--color-text-muted: #4a7a4a;
+
+	/* Layout */
+	--touch-h: 62px;
+	--controls-h: 84px;
+	--radius-sm: 8px;
+	--radius-md: 14px;
 }
 
 html {
@@ -21,21 +41,48 @@ html {
 body {
 	font-family: 'Space Grotesk', sans-serif;
 	font-optical-sizing: auto;
-	background: radial-gradient(var(--color-primary), var(--color-background));
+	background: var(--color-bg);
 	min-height: 100dvh;
 	min-width: 100vw;
-	color: white;
+	color: var(--color-text);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
 
+button {
+	cursor: pointer;
+	font-family: inherit;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	border: none;
+	border-radius: var(--radius-sm);
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
+}
+
+button:active {
+	filter: brightness(1.15);
+}
+
 .nav-arrow {
 	position: fixed;
-	text-transform: uppercase;
-	background-color: transparent;
-	border: none;
-	color: white;
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	color: var(--color-text-2);
 	right: 10px;
 	top: 10px;
+	padding: 7px 13px;
+	border-radius: var(--radius-sm);
+	z-index: 100;
+	white-space: nowrap;
 	cursor: pointer;
+}
+
+.nav-arrow:hover {
+	background: var(--color-surface-2);
+	border-color: var(--color-border-2);
 }

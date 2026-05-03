@@ -1,17 +1,43 @@
-button {
-	text-transform: capitalize;
-	&.play {
-		background-color: green;
-		&.active,
-		&:hover {
-			background-color: greenyellow;
-		}
-	}
-	&.stop {
-		background-color: brown;
-		&:hover,
-		&:active {
-			background-color: red;
-		}
-	}
+.play {
+	background: #14532d;
+	color: #86efac;
+	border: 2px solid #166534;
+	height: 100%;
+	width: 100%;
+	font-size: 0.85rem;
+	border-radius: var(--radius-sm);
+	transition:
+		background-color 0.1s,
+		border-color 0.1s,
+		box-shadow 0.1s;
+}
+
+.play.active {
+	background: #166534;
+	color: var(--color-playing);
+	border-color: var(--color-playing);
+	box-shadow: 0 0 18px rgba(163, 230, 53, 0.25);
+}
+
+.play:hover {
+	background: #166534;
+}
+
+.stop {
+	background: #450a0a;
+	color: #f87171;
+	border: 2px solid #7f1d1d;
+	height: 100%;
+	width: 100%;
+	font-size: 0.85rem;
+	border-radius: var(--radius-sm);
+	transition:
+		background-color 0.1s,
+		border-color 0.1s;
+}
+
+.stop:hover,
+.stop:active {
+	background: #7f1d1d;
+	border-color: var(--color-stop);
 }

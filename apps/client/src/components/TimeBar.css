@@ -1,10 +1,37 @@
-.time-bar-container {
-	width: 100%;
-	height: 20px;
-	background: #ddd;
+.time-bar-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 0 4px;
 }
+
+.time-bar-container {
+	flex: 1;
+	height: 4px;
+	background: var(--color-surface-2);
+	border-radius: 2px;
+	overflow: hidden;
+}
+
 .time-bar {
-	background-color: aqua;
 	height: 100%;
 	display: block;
+	background: linear-gradient(
+		90deg,
+		var(--color-section),
+		var(--color-playing)
+	);
+	border-radius: 2px;
+	transition: width 350ms linear;
+	min-width: 3px;
+}
+
+.time-bar-label {
+	font-size: 0.7rem;
+	font-weight: 600;
+	color: var(--color-text-muted);
+	letter-spacing: 0.05em;
+	white-space: nowrap;
+	min-width: 36px;
+	text-align: right;
 }

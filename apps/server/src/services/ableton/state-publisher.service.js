@@ -4,11 +4,24 @@ import {
 	abletonEventManager,
 } from '../../events/ableton.events.js';
 
-export const publishState = () => {
-	abletonEventManager.emit(ABLETON_EVENTS.STATE_CHANGE, getState());
+export const publishState = (keyToSend) => {
+	const newState = getState();
+	if (!keyToSend) {
+		abletonEventManager.emit(ABLETON_EVENTS.STATE_CHANGE, newState);
+		return;
+	}
+
+	const objectFiltered = {};
+
+	for (const key of keyToSend) {
+		const value = newState[key];
+		objectFiltered[key] = value;
+	}
+
+	abletonEventManager.emit(ABLETON_EVENTS.STATE_CHANGE, objectFiltered);
 };
 
 export const patchAbletonState = (partial) => {
 	setState(partial);
-	publishState();
+	publishState(Object.keys(partial));
 };

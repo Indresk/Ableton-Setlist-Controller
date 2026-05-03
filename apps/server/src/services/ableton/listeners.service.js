@@ -1,24 +1,14 @@
 import { ableton } from './ableton.service.js';
-import {
-	startTimePolling,
-	stopTimePolling,
-} from './playback-ticker.service.js';
+import { timePollingPerBeat } from './playback-ticker.service.js';
 import { playlistPlayer, playlistSeter } from './playlist.service.js';
 import { patchAbletonState } from './state-publisher.service.js';
 
 let isBound = false;
-let arragementPosition = 0;
 
 // Handlers de listener
 
 const handleIsPlaying = (val) => {
 	patchAbletonState({ isPlaying: val });
-
-	if (val) {
-		startTimePolling();
-	} else {
-		stopTimePolling();
-	}
 };
 
 const handleTempo = (val) => {
@@ -26,12 +16,10 @@ const handleTempo = (val) => {
 };
 
 const handleArragenmentPosition = (time) => {
+	timePollingPerBeat(time);
 	playlistSeter(time);
 	playlistPlayer(time);
-	arragementPosition = time;
 };
-
-export const getArregementPosition = () => arragementPosition;
 
 // Controladores de Listener
 

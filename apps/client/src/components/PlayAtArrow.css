@@ -1,0 +1,23 @@
+.play-at-btn {
+	background: transparent;
+	color: var(--color-text-muted);
+	border: none;
+	width: var(--touch-h);
+	height: var(--touch-h);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 0;
+	flex-shrink: 0;
+	transition: color 0.1s, background-color 0.1s;
+}
+
+.play-at-btn:hover {
+	color: var(--color-playing);
+	background: rgba(163, 230, 53, 0.08);
+}
+
+.play-at-btn:active {
+	color: var(--color-playing);
+	background: rgba(163, 230, 53, 0.18);
+}

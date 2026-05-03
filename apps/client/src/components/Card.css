@@ -1,26 +1,70 @@
 .card {
-	background-color: var(--color-secondary);
-	border-radius: 10px;
-	height: 40px;
-	border: solid 2px var(--color-border);
-	overflow: hidden;
+	background: var(--color-surface);
+	border-radius: var(--radius-md);
+	height: var(--touch-h);
+	border: 2px solid var(--color-border);
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
+	overflow: hidden;
+	text-transform: capitalize;
+	transition:
+		border-color 0.15s,
+		background-color 0.15s,
+		color 0.15s;
 }
 
-.dragging {
-	> .card {
-		border-color: greenyellow;
-	}
+/* Nombre de canción o sección — ocupa todo el espacio disponible */
+.card-name {
+	flex: 1;
+	font-size: 1.1rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding: 0 4px;
+}
+
+/* Handle de drag — solo activo en la zona de puntos */
+.drag-handle {
+	width: 44px;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--color-text-muted);
+	cursor: grab;
+	touch-action: none; /* crítico: evita que el browser tome el touch para scroll */
+	flex-shrink: 0;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.drag-handle:hover {
+	color: var(--color-text-2);
+}
+
+.drag-handle:active {
+	cursor: grabbing;
+}
+
+/* Cuando no hay handle (secciones en CurrentSongView) */
+.card:not(:has(.drag-handle)) {
+	padding-left: 16px;
+}
+
+/* Estado: siendo arrastrado */
+.dragging > .card {
+	border-color: var(--color-playing);
+	opacity: 0.55;
 }
 
 .draggeable {
-	cursor: grab;
+	border-radius: var(--radius-md);
 }
 
-.active {
-	> .card {
-		background-color: var(--color-border);
-	}
+/* Estado: canción activa en reproducción */
+.active > .card {
+	border-color: var(--color-current);
+	background: var(--color-surface-2);
+	color: var(--color-current);
 }
