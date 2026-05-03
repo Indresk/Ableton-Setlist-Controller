@@ -1,6 +1,4 @@
-import { SONG_END, SONG_SECTIONS } from './song-cues.constants.js';
-
-const SONG_SECTIONS_SET = new Set(SONG_SECTIONS);
+import { SONG_END } from './song-cues.constants.js';
 
 export const parseSongsFromCuePoints = (cuePoints) => {
 	const songs = [];
@@ -26,17 +24,18 @@ export const parseSongsFromCuePoints = (cuePoints) => {
 			continue;
 		}
 
-		if (SONG_SECTIONS_SET.has(cue.name)) {
-			if (currentSong) innerCues.push(cue);
+		if (cue.name.endsWith('+')) {
+			currentSong = {
+				id: cue.id,
+				name: cue.name.replace(/[\s+]$/, '').trim(),
+				start: cue.time,
+			};
+			innerCues = [];
+
 			continue;
 		}
 
-		currentSong = {
-			id: cue.id,
-			name: cue.name,
-			start: cue.time,
-		};
-		innerCues = [];
+		if (currentSong) innerCues.push(cue);
 	}
 
 	return songs;
