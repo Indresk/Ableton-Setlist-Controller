@@ -2,7 +2,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	padding: 50px 10px calc(var(--controls-h) + 10px);
 	max-width: 800px;
 	width: 100%;
 	overflow-y: auto;

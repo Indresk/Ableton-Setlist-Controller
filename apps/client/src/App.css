@@ -1,0 +1,15 @@
+.main-container {
+	height: 100dvh;
+	overflow: hidden;
+}
+
+.views-container {
+	overflow: hidden;
+	padding-inline: 12px;
+	flex-grow: 0;
+	flex-shrink: 0;
+	> div {
+		padding-top: 12px;
+		padding-bottom: 152px;
+	}
+}

@@ -8,14 +8,14 @@ import { BrowserRouter } from 'react-router';
 import './index.css';
 
 socket.on(EVENTS.SERVER.STATE_UPDATE, (state) => {
-	// console.log(state);
+	console.log(state);
 	useAbletonStore.setState(state);
 });
 
 createRoot(document.getElementById('root')).render(
-	// <StrictMode>
-	<BrowserRouter>
-		<App />
-	</BrowserRouter>,
-	// </StrictMode>,
+	<StrictMode>
+		<BrowserRouter>
+			<App />
+		</BrowserRouter>
+	</StrictMode>,
 );

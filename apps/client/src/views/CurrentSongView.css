@@ -1,5 +1,4 @@
 .current-song-view {
-	padding: 50px 12px calc(var(--controls-h) + 12px);
 	display: flex;
 	flex-direction: column;
 	gap: 6px;

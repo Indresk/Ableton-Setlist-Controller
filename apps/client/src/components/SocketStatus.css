@@ -1,15 +1,11 @@
 .dot-status {
-	position: fixed;
-	top: 5px;
-	left: 5px;
 	width: 10px;
 	height: 10px;
 	border-width: 2px;
 	border-style: solid;
 	transition:
-		background-color 0.1s,
-		border-color 0.1s;
-	z-index: 51;
+		background-color 0.5s,
+		border-color 0.5s;
 	border-radius: 100%;
 	&.active {
 		background: #14532d;

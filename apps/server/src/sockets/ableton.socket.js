@@ -47,6 +47,11 @@ export const registerAbletonHandlers = (io, socket) => {
 		patchAbletonState({ songsCue });
 		ack?.({ ok: true });
 	});
+
+	socket.on(EVENTS.CLIENT.REFRESH, async (ack) => {
+		patchAbletonState(getState());
+		ack?.({ ok: true });
+	});
 };
 
 export const registerAbletonBroadcaster = (io) => {

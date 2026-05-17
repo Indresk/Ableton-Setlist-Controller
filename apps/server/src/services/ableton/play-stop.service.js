@@ -8,11 +8,13 @@ export async function playAt(songIndex) {
 	const { songsCue } = getState();
 	const newTime = songsCue[song].sections[section].time;
 	play();
+	play();
 	if (newTime) await jumpToTime(newTime);
 }
 
 export async function continuePlaying() {
 	const { time } = getState();
+	play();
 	play();
 	await jumpToTime(time);
 }

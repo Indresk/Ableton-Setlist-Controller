@@ -1,0 +1,51 @@
+.nav-arrow {
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	color: var(--color-text-2);
+	padding: 7px 13px;
+	border-radius: var(--radius-sm);
+	white-space: nowrap;
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.nav-arrow:hover {
+	background: var(--color-surface-2);
+	border-color: var(--color-border-2);
+}
+
+.status-container {
+	color: var(--color-text-muted);
+	font-size: 0.6rem;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+}
+
+.header-container {
+	display: flex;
+	justify-content: space-between;
+	padding: 8px 16px;
+	gap: 8px;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.reconnect-button {
+	font-size: 0.5rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	color: var(--color-text-2);
+	padding: 7px 13px;
+	border-radius: var(--radius-sm);
+}

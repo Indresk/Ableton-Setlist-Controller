@@ -7,6 +7,7 @@ export const EVENTS = {
 		GET_CUE: 'client:get_cue',
 		SET_CUE: 'client:set_cue',
 		PLAY_CUE: 'client:play_cue',
+		REFRESH: 'client:refresh',
 	},
 	SERVER: {
 		STATE_UPDATE: 'server:state_update',
