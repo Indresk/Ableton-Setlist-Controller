@@ -1,6 +1,6 @@
 export function healthRender(data) {
 	const { ableton: abletonState, ...serverState } = data;
-	const isOk = Boolean(serverState?.abletonConnected);
+	const isOk = Boolean(abletonState?.connected);
 
 	const uptimeSeconds = Math.floor(data.uptime ?? 0);
 	const uptimeMinutes = Math.floor(uptimeSeconds / 60);
@@ -14,7 +14,7 @@ export function healthRender(data) {
 		? new Date(data.timestamp).toLocaleString('es-CO')
 		: new Date().toLocaleString('es-CO');
 
-	const songsCount = abletonState?.songsCue?.length ?? 0;
+	const songsCount = abletonState?.songs;
 	const tempo = abletonState?.tempo ?? '--';
 	const isPlaying = Boolean(abletonState?.isPlaying);
 	const connectedClients = serverState?.connectedClients ?? 0;
@@ -405,7 +405,7 @@ export function healthRender(data) {
 
           <div class="detail-item">
             <div class="detail-key">Resumen uptime</div>
-            <div class="detail-value">${uptimeHours}h / ${uptimeMinutes}m</div>
+            <div class="detail-value">${uptimeHours}h - ${uptimeMinutes}m</div>
           </div>
 
           <div class="detail-item">
