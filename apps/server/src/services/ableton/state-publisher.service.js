@@ -3,22 +3,34 @@ import {
 	ABLETON_EVENTS,
 	abletonEventManager,
 } from '../../events/ableton.events.js';
+import { EVENTS } from '../../../../../packages/shared/events.js';
+import { database } from '../../config/db.config.js';
+import { saveEvent } from '../../domain/db/event-log.repository.js';
+import { logger } from '../../utils/logger.js';
 
 export const publishState = (keyToSend) => {
 	const newState = getState();
+	let payload = {};
+
 	if (!keyToSend) {
-		abletonEventManager.emit(ABLETON_EVENTS.STATE_CHANGE, newState);
-		return;
+		payload = newState;
+	} else {
+		for (const key of keyToSend) {
+			payload[key] = newState[key];
+		}
 	}
 
-	const objectFiltered = {};
+	try {
+		// Guardamos el evento y obtenemos el eventId monotónico
+		const eventId = saveEvent(database, EVENTS.SERVER.STATE_UPDATE, payload);
 
-	for (const key of keyToSend) {
-		const value = newState[key];
-		objectFiltered[key] = value;
+		// Inyectamos el eventId al payload para que los clientes lo reciban
+		const payloadWithId = { ...payload, lastEventId: eventId };
+
+		abletonEventManager.emit(ABLETON_EVENTS.STATE_CHANGE, payloadWithId);
+	} catch (error) {
+		logger.error('Error al publicar estado', { error: error.message });
 	}
-
-	abletonEventManager.emit(ABLETON_EVENTS.STATE_CHANGE, objectFiltered);
 };
 
 export const patchAbletonState = (partial) => {

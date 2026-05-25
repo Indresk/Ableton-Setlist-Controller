@@ -10,6 +10,7 @@ import {
 } from '../../domain/db/setlist.repository.js';
 import { logger } from '../../utils/logger.js';
 import { setServerState } from '../../state/server.state.js';
+import { abletonEventManager, ABLETON_EVENTS } from '../../events/ableton.events.js';
 
 /**
  * Arranca la conexión con Ableton y carga el estado inicial.
@@ -30,6 +31,7 @@ export const initAbleton = async () => {
 		await ableton.start();
 		logger.info('Conexión con Ableton establecida');
 		setServerState({ abletonConnected: true });
+		abletonEventManager.emit(ABLETON_EVENTS.STATUS_CHANGE, true);
 
 		bindAbletonListeners();
 
@@ -80,6 +82,7 @@ export const initAbleton = async () => {
 		logger.info('Estado inicial publicado a clientes');
 	} catch (err) {
 		setServerState({ abletonConnected: false });
+		abletonEventManager.emit(ABLETON_EVENTS.STATUS_CHANGE, false);
 		logger.error('Error al inicializar Ableton', {
 			error: err.message,
 			stack: err.stack,

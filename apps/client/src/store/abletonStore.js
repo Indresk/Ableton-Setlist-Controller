@@ -7,6 +7,8 @@ export const useAbletonStore = create((set) => ({
 	currentSong: 0,
 	currentSection: 0,
 	time: 0,
+	lastEventId: null,
 
 	setState: (newState) => set(newState),
 }));
+

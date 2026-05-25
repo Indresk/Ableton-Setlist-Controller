@@ -76,7 +76,6 @@ export async function playAt(songIndex) {
  */
 export async function continuePlaying() {
 	if (isExecuting) {
-		console.log(`Executing state: ${isExecuting}`);
 		logger.warn(
 			'continuePlaying ignorado: ya hay una operación de playback en curso',
 		);

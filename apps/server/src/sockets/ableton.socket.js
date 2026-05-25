@@ -13,12 +13,40 @@ import {
 } from '../services/ableton/play-stop.service.js';
 import { database } from '../config/db.config.js';
 import { saveSetlist } from '../domain/db/setlist.repository.js';
+import { getEventsSince } from '../domain/db/event-log.repository.js';
 import { logger } from '../utils/logger.js';
 
-
 export const registerAbletonHandlers = (io, socket) => {
-	// Enviar estado completo al cliente que acaba de conectarse
-	socket.emit(EVENTS.SERVER.STATE_UPDATE, getState());
+	// ── Sincronización inicial ────────────────────────────────────────────────
+	
+	socket.on(EVENTS.CLIENT.SYNC, (lastEventId) => {
+		logger.info('CLIENT.SYNC recibido', { clientId: socket.id, lastEventId });
+		
+		const currentState = getState();
+		
+		if (!lastEventId) {
+			// El cliente no tiene estado, enviamos todo
+			socket.emit(EVENTS.SERVER.FULL_STATE, currentState);
+			return;
+		}
+		
+		const events = getEventsSince(database, lastEventId);
+		
+		if (events.length === 0) {
+			// El cliente está al día, tal vez un FULL_STATE para asegurar
+			socket.emit(EVENTS.SERVER.FULL_STATE, currentState);
+		} else if (events.length > 50) {
+			// Hay demasiados eventos para replay, es más seguro enviar FULL_STATE
+			logger.info('CLIENT.SYNC: demasiados eventos, enviando FULL_STATE', { clientId: socket.id, missed: events.length });
+			socket.emit(EVENTS.SERVER.FULL_STATE, currentState);
+		} else {
+			// Replay de eventos perdidos
+			logger.info('CLIENT.SYNC: haciendo replay de eventos', { clientId: socket.id, count: events.length });
+			for (const event of events) {
+				socket.emit(EVENTS.SERVER.STATE_UPDATE, event.payload);
+			}
+		}
+	});
 
 	// ── Comandos de transporte ────────────────────────────────────────────────
 
@@ -86,5 +114,9 @@ export const registerAbletonHandlers = (io, socket) => {
 export const registerAbletonBroadcaster = (io) => {
 	abletonEventManager.on(ABLETON_EVENTS.STATE_CHANGE, (state) => {
 		io.emit(EVENTS.SERVER.STATE_UPDATE, state);
+	});
+	
+	abletonEventManager.on(ABLETON_EVENTS.STATUS_CHANGE, (isConnected) => {
+		io.emit(EVENTS.SERVER.ABLETON_STATUS, { connected: isConnected });
 	});
 };

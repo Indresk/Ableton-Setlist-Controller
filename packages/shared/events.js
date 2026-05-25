@@ -8,8 +8,11 @@ export const EVENTS = {
 		SET_CUE: 'client:set_cue',
 		PLAY_CUE: 'client:play_cue',
 		REFRESH: 'client:refresh',
+		SYNC: 'client:sync',
 	},
 	SERVER: {
 		STATE_UPDATE: 'server:state_update',
+		FULL_STATE: 'server:full_state',
+		ABLETON_STATUS: 'server:ableton_status',
 	},
 };

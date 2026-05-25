@@ -38,5 +38,12 @@ export function initSchema(db) {
       key   TEXT PRIMARY KEY,
       value TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS event_log (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_type  TEXT NOT NULL,
+      payload     TEXT NOT NULL,
+      created_at  INTEGER NOT NULL
+    );
   `);
 }
