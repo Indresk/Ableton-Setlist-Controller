@@ -17,8 +17,7 @@ export function healthRender(data) {
 	const songsCount = abletonState?.songs;
 	const tempo = abletonState?.tempo ?? '--';
 	const isPlaying = Boolean(abletonState?.isPlaying);
-	const connectedClients = serverState?.connectedClients ?? 0;
-
+	const connectedClients = serverState.clients;
 	const statusLabel = isOk ? 'Servidor operativo' : 'Sin conexión con Ableton';
 	const statusClass = isOk ? 'is-ok' : 'is-error';
 	const playingLabel = isPlaying ? 'Reproduciendo' : 'Detenido';
@@ -343,7 +342,15 @@ export function healthRender(data) {
     <main class="health-view">
       <header class="health-header">
         <h1 class="health-title">Health view</h1>
-        <a class="health-back" href="/">Volver a la aplicación</a>
+        <div style="display:flex; gap:4px;">
+          <a class="health-back" href="/">Volver a la aplicación</a>
+          <button id="download-report" class="health-back" style="padding:4px"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+            <path d="M7 11l5 5l5 -5" />
+            <path d="M12 4l0 12" />
+          </svg></button>
+        </div>
       </header>
 
       <section class="health-banner ${statusClass}">
@@ -354,6 +361,8 @@ export function healthRender(data) {
             <strong>${statusLabel}</strong>
           </div>
         </div>
+
+        
 
         <div class="health-meta">
           Última actualización<br />
@@ -453,6 +462,25 @@ export function healthRender(data) {
         </div>
       </section>
     </main>
+    <script>
+      document.getElementById('download-report').addEventListener("click", () => {
+
+      const clientData = ${JSON.stringify(data, null, 2)}
+
+      const json = JSON.stringify(clientData, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "current-health-status.json";
+      a.click();
+
+      URL.revokeObjectURL(url);
+    });
+    
+    </script>
   </body>
+  
 </html>`;
 }

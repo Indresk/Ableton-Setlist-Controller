@@ -46,7 +46,7 @@ export async function playlistPlayer(time) {
 	const endTime = currentSongInfo?.end;
 	const nextSongTime = nextSongInfo?.start;
 
-	const timeFixed = Math.floor(time);
+	const timeFixed = Math.floor(time + 0.1);
 
 	// Última canción de la playlist: parar al llegar al final
 	if (!nextSongInfo || nextSongTime == null) {

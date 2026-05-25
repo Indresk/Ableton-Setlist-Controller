@@ -23,3 +23,6 @@ export const jumpToTime = async (time) =>
 export const getRawCuePoints = async () => {
 	return await ableton.song.get('cue_points');
 };
+
+export const continuePlaylist = async () =>
+	await ableton.song.continuePlaying();

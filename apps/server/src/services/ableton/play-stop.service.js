@@ -1,5 +1,5 @@
 import { getState } from '../../state/ableton.state.js';
-import { jumpToTime, play } from './ableton.service.js';
+import { continuePlaylist, jumpToTime, play } from './ableton.service.js';
 import { logger } from '../../utils/logger.js';
 
 /**
@@ -76,6 +76,7 @@ export async function playAt(songIndex) {
  */
 export async function continuePlaying() {
 	if (isExecuting) {
+		console.log(`Executing state: ${isExecuting}`);
 		logger.warn(
 			'continuePlaying ignorado: ya hay una operación de playback en curso',
 		);
@@ -87,10 +88,7 @@ export async function continuePlaying() {
 		const { time } = getState();
 		logger.info('continuePlaying', { time });
 
-		// Doble play() intencional — ver comentario en playAt.
-		play();
-		// play();
-		await jumpToTime(time);
+		await continuePlaylist();
 	} finally {
 		isExecuting = false;
 	}
