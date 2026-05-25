@@ -35,22 +35,34 @@ export async function playAt(songIndex) {
 		const targetSong = songsCue[song];
 
 		if (!targetSong) {
-			logger.error('playAt: índice de canción fuera de rango', { song, total: songsCue.length });
+			logger.error('playAt: índice de canción fuera de rango', {
+				song,
+				total: songsCue.length,
+			});
 			return;
 		}
 
 		const targetSection = targetSong.sections[section];
 		if (!targetSection) {
-			logger.error('playAt: índice de sección fuera de rango', { song, section, totalSections: targetSong.sections.length });
+			logger.error('playAt: índice de sección fuera de rango', {
+				song,
+				section,
+				totalSections: targetSong.sections.length,
+			});
 			return;
 		}
 
 		const newTime = targetSection.time;
-		logger.info('playAt', { song, section, songName: targetSong.name, time: newTime });
+		logger.info('playAt', {
+			song,
+			section,
+			songName: targetSong.name,
+			time: newTime,
+		});
 
 		// Doble play() intencional — ver comentario arriba.
 		play();
-		play();
+		// play();
 		if (newTime != null) await jumpToTime(newTime);
 	} finally {
 		isExecuting = false;
@@ -64,7 +76,9 @@ export async function playAt(songIndex) {
  */
 export async function continuePlaying() {
 	if (isExecuting) {
-		logger.warn('continuePlaying ignorado: ya hay una operación de playback en curso');
+		logger.warn(
+			'continuePlaying ignorado: ya hay una operación de playback en curso',
+		);
 		return;
 	}
 	isExecuting = true;
@@ -75,7 +89,7 @@ export async function continuePlaying() {
 
 		// Doble play() intencional — ver comentario en playAt.
 		play();
-		play();
+		// play();
 		await jumpToTime(time);
 	} finally {
 		isExecuting = false;

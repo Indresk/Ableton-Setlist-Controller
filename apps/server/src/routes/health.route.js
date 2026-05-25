@@ -1,6 +1,7 @@
 import express from 'express';
 import { getState } from '../state/ableton.state.js';
 import { getServerState } from '../state/server.state.js';
+import { healthRender } from './health.render.js';
 
 const healthRoute = express.Router();
 
@@ -20,25 +21,28 @@ const healthRoute = express.Router();
  *  - clients: clientes socket conectados en este momento
  *  - timestamp: Unix timestamp en ms del momento de la consulta
  */
+
 healthRoute.get('/', (req, res) => {
 	const abletonState = getState();
 	const serverState = getServerState();
 
 	const status = serverState.abletonConnected ? 'ok' : 'degraded';
 
-	res.status(status === 'ok' ? 200 : 503).json({
-		status,
-		uptime: Math.floor(process.uptime()),
-		ableton: {
-			connected: serverState.abletonConnected,
-			isPlaying: abletonState.isPlaying,
-			tempo: abletonState.tempo,
-			songs: abletonState.songsCue?.length ?? 0,
-		},
-		clients: serverState.connectedClients,
-		startedAt: serverState.startedAt,
-		timestamp: Date.now(),
-	});
+	res.status(status === 'ok' ? 200 : 503).send(
+		healthRender({
+			status,
+			uptime: Math.floor(process.uptime()),
+			ableton: {
+				connected: serverState.abletonConnected,
+				isPlaying: abletonState.isPlaying,
+				tempo: abletonState.tempo,
+				songs: abletonState.songsCue?.length ?? 0,
+			},
+			clients: serverState.connectedClients,
+			startedAt: serverState.startedAt,
+			timestamp: Date.now(),
+		}),
+	);
 });
 
 export default healthRoute;

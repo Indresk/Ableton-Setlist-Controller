@@ -51,9 +51,11 @@ export const initAbleton = async () => {
 			const savedSetlist = loadActiveSetlist(database);
 			if (savedSetlist) {
 				songsCue = reconcileSetlistWithAbleton(savedSetlist, abletonSongsCue);
-				const added = songsCue.length - savedSetlist.filter(s =>
-					abletonSongsCue.some(a => String(a.id) === s.ableton_song_id)
-				).length;
+				const added =
+					songsCue.length -
+					savedSetlist.filter((s) =>
+						abletonSongsCue.some((a) => String(a.id) === s.ableton_song_id),
+					).length;
 				const removed = savedSetlist.length - (songsCue.length - added);
 				logger.info('Setlist cargado y reconciliado con Ableton', {
 					saved: savedSetlist.length,
@@ -63,10 +65,10 @@ export const initAbleton = async () => {
 					removed,
 				});
 			} else {
-				logger.info('Sin setlist guardado — usando orden de Ableton');
+				logger.info('Sin setlist guardado - usando orden de Ableton');
 			}
 		} catch (dbErr) {
-			logger.warn('Error al cargar setlist de DB — usando orden de Ableton', {
+			logger.warn('Error al cargar setlist de DB - usando orden de Ableton', {
 				error: dbErr.message,
 			});
 			songsCue = abletonSongsCue;
@@ -82,7 +84,7 @@ export const initAbleton = async () => {
 			error: err.message,
 			stack: err.stack,
 		});
-		// No se hace process.exit — el servidor sigue en pie para servir la SPA
+		// No se hace process.exit - el servidor sigue en pie para servir la SPA
 		// y para que el cliente muestre el estado de "Ableton desconectado".
 		// Los listeners no quedan registrados, así que no habrá actualizaciones de estado.
 	}
