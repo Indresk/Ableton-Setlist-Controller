@@ -12,8 +12,8 @@ dist
 dist-ssr
 *.local
 /additional-tools
-/apps/server/src/db/*
-
+/apps/server/src/db/*.db
+/apps/server/scripts
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
