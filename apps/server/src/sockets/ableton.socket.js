@@ -51,6 +51,11 @@ export const registerAbletonHandlers = (io, socket) => {
 	// ── Comandos de transporte ────────────────────────────────────────────────
 
 	socket.on(EVENTS.CLIENT.PLAY, async (songIndex, ack) => {
+		if (typeof songIndex !== 'number' && !Array.isArray(songIndex)) {
+			logger.warn('CLIENT.PLAY payload inválido', { songIndex, clientId: socket.id });
+			ack?.({ ok: false, error: 'songIndex debe ser un número o un array [canción, sección]' });
+			return;
+		}
 		logger.debug('CLIENT.PLAY recibido', { songIndex, clientId: socket.id });
 		await playAt(songIndex);
 		ack?.({ ok: true });
@@ -69,6 +74,11 @@ export const registerAbletonHandlers = (io, socket) => {
 	});
 
 	socket.on(EVENTS.CLIENT.SET_TEMPO, async (tempo, ack) => {
+		if (typeof tempo !== 'number' || tempo < 20 || tempo > 999) {
+			logger.warn('CLIENT.SET_TEMPO payload inválido', { tempo, clientId: socket.id });
+			ack?.({ ok: false, error: 'tempo debe ser un número entre 20 y 999' });
+			return;
+		}
 		logger.debug('CLIENT.SET_TEMPO recibido', { tempo, clientId: socket.id });
 		await setTempo(tempo);
 		ack?.({ ok: true });
@@ -84,9 +94,15 @@ export const registerAbletonHandlers = (io, socket) => {
 	});
 
 	socket.on(EVENTS.CLIENT.SET_CUE, async (songsCue, ack) => {
+		if (!Array.isArray(songsCue)) {
+			logger.warn('CLIENT.SET_CUE payload inválido', { clientId: socket.id });
+			ack?.({ ok: false, error: 'songsCue debe ser un array' });
+			return;
+		}
+		
 		logger.info('CLIENT.SET_CUE: guardando nuevo orden de canciones', {
 			clientId: socket.id,
-			songs: songsCue?.length,
+			songs: songsCue.length,
 		});
 
 		// Aplicar el nuevo orden en memoria

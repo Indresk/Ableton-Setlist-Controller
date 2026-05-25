@@ -6,18 +6,23 @@ import { getIP } from './utils/getIP.js';
 import { logger } from './utils/logger.js';
 
 // ── Manejo de errores no capturados ──────────────────────────────────────────
-// Evita que el proceso caiga silenciosamente por errores inesperados.
-// El proceso sigue en pie para servir la SPA y mantener los sockets activos.
+// Evita que el proceso quede en un estado corrupto/indeterminado.
+// Se registra el error como FATAL y se apaga el proceso para que PM2 lo reinicie de forma limpia.
 
 process.on('uncaughtException', (err) => {
-	logger.error('uncaughtException', { error: err.message, stack: err.stack });
+	logger.error('FATAL: uncaughtException', {
+		error: err.message,
+		stack: err.stack,
+	});
+	process.exit(1);
 });
 
 process.on('unhandledRejection', (reason) => {
-	logger.error('unhandledRejection', {
+	logger.error('FATAL: unhandledRejection', {
 		error: reason instanceof Error ? reason.message : String(reason),
 		stack: reason instanceof Error ? reason.stack : undefined,
 	});
+	process.exit(1);
 });
 
 // ── Arranque ─────────────────────────────────────────────────────────────────
