@@ -29,7 +29,13 @@ const ACTIVE_SETLIST_KEY = 'active_setlist_id';
  * @param {string} [name='last-saved']
  * @returns {number} id del setlist
  */
-export function saveSetlist(db, songs, name = 'last-saved') {
+export function saveSetlist(db, songs, name) {
+	// Si no se pasa nombre, generamos uno automático con fecha/hora legible
+	if (!name || !name.trim()) {
+		const nowDate = new Date();
+		name = nowDate.toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' })
+			+ ' ' + nowDate.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+	}
 	const now = Date.now();
 
 	// Buscar setlist existente por nombre
@@ -106,9 +112,8 @@ export function loadActiveSetlist(db) {
 
 /**
  * Retorna todos los setlists guardados (metadata, sin canciones).
- * Útil para Fase 4 (selector de setlists en el cliente).
  *
- * @param {import('node:sqlite').DatabaseSync} db
+ * @param {import('better-sqlite3').Database} db
  * @returns {Array<{id: number, name: string, created_at: number, updated_at: number}>}
  */
 export function listSetlists(db) {
@@ -117,6 +122,27 @@ export function listSetlists(db) {
 			'SELECT id, name, created_at, updated_at FROM setlists ORDER BY updated_at DESC',
 		)
 		.all();
+}
+
+/**
+ * Carga las canciones de un setlist por su ID (sólo lectura).
+ * No aplica el setlist al servidor ni modifica ningún estado.
+ *
+ * @param {import('better-sqlite3').Database} db
+ * @param {number} id
+ * @returns {Array<{ableton_song_id: string, song_name: string, position: number}> | null}
+ */
+export function loadSetlistById(db, id) {
+	const songs = db
+		.prepare(
+			`SELECT ableton_song_id, song_name, position
+       FROM setlist_songs
+       WHERE setlist_id = ?
+       ORDER BY position ASC`,
+		)
+		.all(Number(id));
+
+	return songs.length > 0 ? songs : null;
 }
 
 // ─── Reconciliación ───────────────────────────────────────────────────────────

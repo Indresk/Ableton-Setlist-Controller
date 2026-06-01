@@ -5,8 +5,11 @@ import {
 } from '../../events/ableton.events.js';
 import { EVENTS } from '../../../../../packages/shared/events.js';
 import { database } from '../../config/db.config.js';
-import { saveEvent } from '../../domain/db/event-log.repository.js';
+import { saveEvent, getMaxEventId } from '../../domain/db/event-log.repository.js';
 import { logger } from '../../utils/logger.js';
+
+// Inicializar el ID desde la DB en el arranque
+let currentAppEventId = getMaxEventId(database);
 
 export const publishState = (keyToSend) => {
 	const newState = getState();
@@ -21,13 +24,18 @@ export const publishState = (keyToSend) => {
 	}
 
 	try {
-		// Guardamos el evento y obtenemos el eventId monotónico
-		const eventId = saveEvent(database, EVENTS.SERVER.STATE_UPDATE, payload);
+		// Incremento síncrono ultra rápido en memoria
+		currentAppEventId += 1;
+		const eventId = currentAppEventId;
 
-		// Inyectamos el eventId al payload para que los clientes lo reciban
+		// 1. Inyectamos y emitimos de inmediato al cliente (camino crítico libre de I/O)
 		const payloadWithId = { ...payload, lastEventId: eventId };
-
 		abletonEventManager.emit(ABLETON_EVENTS.STATE_CHANGE, payloadWithId);
+
+		// 2. Persistimos de forma diferida fuera del tick actual
+		setImmediate(() => {
+			saveEvent(database, eventId, EVENTS.SERVER.STATE_UPDATE, payload);
+		});
 	} catch (error) {
 		logger.error('Error al publicar estado', { error: error.message });
 	}

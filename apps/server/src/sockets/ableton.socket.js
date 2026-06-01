@@ -12,7 +12,7 @@ import {
 	playAt,
 } from '../services/ableton/play-stop.service.js';
 import { database } from '../config/db.config.js';
-import { saveSetlist } from '../domain/db/setlist.repository.js';
+import { saveSetlist, listSetlists, loadSetlistById } from '../domain/db/setlist.repository.js';
 import { getEventsSince } from '../domain/db/event-log.repository.js';
 import { logger } from '../utils/logger.js';
 
@@ -124,6 +124,58 @@ export const registerAbletonHandlers = (io, socket) => {
 		logger.info('CLIENT.REFRESH: reenviando estado completo', { clientId: socket.id });
 		patchAbletonState(getState());
 		ack?.({ ok: true });
+	});
+
+	// ── Gestión de Setlists Persistentes (Fase 4) ─────────────────────────────
+
+	// Listar todos los setlists guardados (sólo metadata: id, name, created_at)
+	socket.on(EVENTS.CLIENT.FETCH_SETLISTS, (ack) => {
+		if (typeof ack !== 'function') return;
+		try {
+			const setlists = listSetlists(database);
+			ack({ ok: true, data: setlists });
+		} catch (err) {
+			logger.error('Error al listar setlists', { error: err.message });
+			ack({ ok: false, error: 'Error al listar setlists' });
+		}
+	});
+
+	// Devolver las canciones de un setlist por ID (sólo lectura — no muta estado del servidor)
+	socket.on(EVENTS.CLIENT.FETCH_SETLIST_BY_ID, (id, ack) => {
+		if (typeof ack !== 'function') return;
+		if (!id || typeof id !== 'number') {
+			ack({ ok: false, error: 'id debe ser un número' });
+			return;
+		}
+		try {
+			const songs = loadSetlistById(database, id);
+			if (!songs) {
+				ack({ ok: false, error: `Setlist con id ${id} no encontrado` });
+				return;
+			}
+			ack({ ok: true, data: songs });
+		} catch (err) {
+			logger.error('Error al cargar setlist por ID', { error: err.message, id });
+			ack({ ok: false, error: 'Error al cargar setlist' });
+		}
+	});
+
+	// Guardar el workingState con un nombre (o sin nombre para usar timestamp automático)
+	socket.on(EVENTS.CLIENT.SAVE_SETLIST, async (payload, ack) => {
+		if (!payload || !Array.isArray(payload.songs)) {
+			logger.warn('CLIENT.SAVE_SETLIST payload inválido', { clientId: socket.id });
+			ack?.({ ok: false, error: 'payload.songs debe ser un array' });
+			return;
+		}
+		const { songs, name } = payload;
+		try {
+			const id = saveSetlist(database, songs, name);
+			logger.info('Setlist guardado desde cliente', { name: name || '(auto)', songs: songs.length, id, clientId: socket.id });
+			ack?.({ ok: true, data: { id } });
+		} catch (err) {
+			logger.error('Error al guardar setlist', { error: err.message });
+			ack?.({ ok: false, error: 'Error al guardar setlist' });
+		}
 	});
 };
 

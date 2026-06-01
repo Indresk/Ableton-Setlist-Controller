@@ -5,6 +5,44 @@
 	padding: 4px 0 2px;
 }
 
+/* ── Barra de historial (undo / redo) ──────────────────────────────────────── */
+
+.cue-history-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 6px 0 2px;
+}
+
+.btn-history {
+	background: var(--color-surface);
+	color: var(--color-text-muted);
+	border: 1px solid var(--color-border);
+	padding: 6px 10px;
+	font-size: 0.68rem;
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+}
+
+.btn-history:hover:not(:disabled) {
+	border-color: var(--color-border-2);
+	color: var(--color-text-2);
+}
+
+.btn-history:disabled {
+	opacity: 0.3;
+	cursor: not-allowed;
+}
+
+.cue-dirty-indicator {
+	font-size: 0.65rem;
+	color: #facc15;
+	letter-spacing: 0.04em;
+}
+
+/* ── Botones de acción principales ─────────────────────────────────────────── */
+
 .btn-reset {
 	background: var(--color-surface);
 	color: var(--color-text-muted);
@@ -12,6 +50,7 @@
 	padding: 10px 8px;
 	font-size: 0.72rem;
 	border-radius: var(--radius-sm);
+	cursor: pointer;
 }
 
 .btn-reset:hover {
@@ -26,6 +65,7 @@
 	padding: 10px 8px;
 	font-size: 0.72rem;
 	border-radius: var(--radius-sm);
+	cursor: pointer;
 }
 
 .btn-set:disabled {
@@ -40,9 +80,152 @@
 	padding: 10px 8px;
 	font-size: 0.72rem;
 	border-radius: var(--radius-sm);
+	cursor: pointer;
 }
 
 .btn-play-all:hover {
 	background: #166534;
 	border-color: var(--color-playing);
+}
+
+/* ── Acciones de persistencia ──────────────────────────────────────────────── */
+
+.cue-persist-actions {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	padding: 4px 0 2px;
+}
+
+.btn-persist {
+	background: var(--color-surface);
+	color: var(--color-text-muted);
+	border: 1px dashed var(--color-border);
+	padding: 8px;
+	font-size: 0.68rem;
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+}
+
+.btn-persist:hover {
+	border-color: var(--color-border-2);
+	color: var(--color-text-2);
+	border-style: solid;
+}
+
+/* ── Panel de carga de setlists ────────────────────────────────────────────── */
+
+.cue-load-panel {
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	padding: 10px;
+	margin-top: 4px;
+}
+
+.load-panel-title {
+	font-size: 0.72rem;
+	color: var(--color-text-2);
+	margin: 0 0 8px 0;
+	font-weight: 600;
+}
+
+.load-panel-empty {
+	font-size: 0.68rem;
+	color: var(--color-text-muted);
+	margin: 0;
+}
+
+.load-panel-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.load-panel-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background: var(--color-surface-2);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	padding: 6px 8px;
+}
+
+.load-panel-name {
+	font-size: 0.68rem;
+	color: var(--color-text-2);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 60%;
+}
+
+.btn-load-item {
+	background: var(--color-surface);
+	color: var(--color-text-muted);
+	border: 1px solid var(--color-border);
+	padding: 4px 10px;
+	font-size: 0.62rem;
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+}
+
+.btn-load-item:hover {
+	border-color: var(--color-border-2);
+	color: var(--color-text-2);
+}
+
+/* ── Modal guardar setlist ─────────────────────────────────────────────────── */
+
+.cue-save-modal-backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 100;
+}
+
+.cue-save-modal {
+	background: var(--color-surface);
+	border: 1px solid var(--color-border-2);
+	border-radius: var(--radius-sm);
+	padding: 16px;
+	min-width: 260px;
+	max-width: 90vw;
+}
+
+.save-modal-title {
+	font-size: 0.78rem;
+	color: var(--color-text-2);
+	margin: 0 0 10px 0;
+	font-weight: 600;
+}
+
+.save-modal-input {
+	width: 100%;
+	background: var(--color-surface-2);
+	color: var(--color-text-2);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	padding: 8px;
+	font-size: 0.72rem;
+	box-sizing: border-box;
+	outline: none;
+}
+
+.save-modal-input:focus {
+	border-color: var(--color-border-2);
+}
+
+.save-modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 12px;
 }

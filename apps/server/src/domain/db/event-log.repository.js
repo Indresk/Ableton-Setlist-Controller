@@ -3,22 +3,21 @@ import { logger } from '../../utils/logger.js';
 const EVENT_LOG_LIMIT = 100;
 
 /**
- * Guarda un evento en la tabla event_log.
+ * Guarda un evento en la tabla event_log usando un ID explícito generado en memoria.
  * Automáticamente purga los eventos antiguos para mantener un máximo de EVENT_LOG_LIMIT.
  * 
  * @param {import('better-sqlite3').Database} db
+ * @param {number} id ID explícito generado por la aplicación
  * @param {string} eventType Tipo de evento (ej. 'STATE_UPDATE')
  * @param {object} payload Datos del evento
- * @returns {number} El ID monotónico (event_id) generado para este evento
  */
-export function saveEvent(db, eventType, payload) {
+export function saveEvent(db, id, eventType, payload) {
 	try {
 		const stmt = db.prepare(
-			'INSERT INTO event_log (event_type, payload, created_at) VALUES (?, ?, ?)'
+			'INSERT INTO event_log (id, event_type, payload, created_at) VALUES (?, ?, ?, ?)'
 		);
 		
-		const result = stmt.run(eventType, JSON.stringify(payload), Date.now());
-		const eventId = result.lastInsertRowid;
+		stmt.run(id, eventType, JSON.stringify(payload), Date.now());
 
 		// Purga asíncrona (o síncrona en sqlite, es muy rápida) para mantener el límite
 		db.prepare(
@@ -27,10 +26,25 @@ export function saveEvent(db, eventType, payload) {
 			)`
 		).run(EVENT_LOG_LIMIT);
 
-		return eventId;
 	} catch (error) {
 		logger.error('Error al guardar evento en event_log', { error: error.message });
-		throw error;
+	}
+}
+
+/**
+ * Obtiene el ID máximo actual en la tabla event_log.
+ * Útil para inicializar el contador en memoria al arrancar.
+ * 
+ * @param {import('better-sqlite3').Database} db
+ * @returns {number} El último ID registrado o 0 si está vacía
+ */
+export function getMaxEventId(db) {
+	try {
+		const row = db.prepare('SELECT MAX(id) as maxId FROM event_log').get();
+		return row && row.maxId ? row.maxId : 0;
+	} catch (error) {
+		logger.error('Error al obtener el ID máximo de event_log', { error: error.message });
+		return 0;
 	}
 }
 
