@@ -122,15 +122,16 @@ export default function CueContainer() {
 				console.error('[CueContainer] Error al cargar setlist:', res?.error);
 				return;
 			}
-			// Reconciliar canciones de la DB con el songsCue actual (fuente de verdad Ableton)
-			const abletonMap = new Map(songsCue.map((s) => [String(s.id), s]));
+			// Reconciliar canciones de la DB con el songsCue actual usando el nombre
+			// (Los IDs de Ableton cambian entre sesiones o recargas del proyecto)
+			const abletonMap = new Map(songsCue.map((s) => [s.name, s]));
 			const loaded = res.data
-				.filter((row) => abletonMap.has(row.ableton_song_id))
-				.map((row) => abletonMap.get(row.ableton_song_id));
+				.filter((row) => abletonMap.has(row.song_name))
+				.map((row) => abletonMap.get(row.song_name));
 			// Agregar al final canciones de Ableton que no estaban en el setlist guardado
-			const loadedIds = new Set(res.data.map((r) => r.ableton_song_id));
+			const loadedNames = new Set(res.data.map((r) => r.song_name));
 			for (const song of songsCue) {
-				if (!loadedIds.has(String(song.id))) loaded.push(song);
+				if (!loadedNames.has(song.name)) loaded.push(song);
 			}
 			set(loaded);
 			setShowLoadPanel(false);
