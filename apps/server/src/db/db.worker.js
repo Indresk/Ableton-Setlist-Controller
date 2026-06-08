@@ -4,7 +4,9 @@ import { initSchema } from './schema.js';
 import path from 'node:path';
 import __dirname from '../utils/dirname.js';
 
-const dbPath = path.join(__dirname, '../src/db/setlist.db');
+const dbPath = process.env.IS_SEA
+	? path.join(__dirname, 'setlist.db')
+	: path.join(__dirname, '../src/db/setlist.db');
 const db = new DatabaseSync(dbPath);
 initSchema(db);
 

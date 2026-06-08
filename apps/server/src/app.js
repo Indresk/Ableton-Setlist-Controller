@@ -5,7 +5,10 @@ import path from 'path';
 
 const app = express();
 
-const clientDistPath = path.join(__dirname, '../../client', 'dist');
+const clientDistPath = process.env.IS_SEA
+	? path.join(__dirname, 'dist')
+	: path.join(__dirname, '../../client', 'dist');
+
 app.use(express.static(clientDistPath));
 
 app.use(express.json());

@@ -17,7 +17,7 @@ The project consists of a Node.js backend that connects to Ableton via the `able
 
 - Ableton Live (the project was developed on Live 12 Lite but should work with other Live versions)
 - AbletonJS MIDI Remote Script (v4.1.0+): the Ableton-side MIDI remote script from https://github.com/leolabs/ableton-js
-- Node.js (v18+ recommended to ensure Worker Threads and ES module support)
+- Node.js (v22.5+ recommended to ensure Worker Threads, ES module support and SQLite native app compatibility)
 - npm (or a compatible package manager)
 
 ## Tech summary
