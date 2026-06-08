@@ -13,7 +13,6 @@
 		color 0.15s;
 }
 
-/* Nombre de canción o sección — ocupa todo el espacio disponible */
 .card-name {
 	flex: 1;
 	font-size: 1.1rem;
@@ -25,7 +24,6 @@
 	padding: 0 4px;
 }
 
-/* Handle de drag — solo activo en la zona de puntos */
 .drag-handle {
 	width: 44px;
 	height: 100%;
@@ -34,7 +32,7 @@
 	justify-content: center;
 	color: var(--color-text-muted);
 	cursor: grab;
-	touch-action: none; /* crítico: evita que el browser tome el touch para scroll */
+	touch-action: none;
 	flex-shrink: 0;
 	-webkit-tap-highlight-color: transparent;
 }
@@ -47,12 +45,10 @@
 	cursor: grabbing;
 }
 
-/* Cuando no hay handle (secciones en CurrentSongView) */
 .card:not(:has(.drag-handle)) {
 	padding-left: 16px;
 }
 
-/* Estado: siendo arrastrado */
 .dragging > .card {
 	border-color: var(--color-playing);
 	opacity: 0.55;
@@ -62,7 +58,6 @@
 	border-radius: var(--radius-md);
 }
 
-/* Estado: canción activa en reproducción */
 .active > .card {
 	border-color: var(--color-current);
 	background: var(--color-surface-2);

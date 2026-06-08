@@ -26,7 +26,6 @@
 	transition: border-color 0.15s;
 }
 
-/* Sección actualmente en reproducción */
 .section-row.active > .card {
 	border-color: var(--color-section);
 	background: var(--color-surface-2);

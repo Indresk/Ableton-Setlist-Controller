@@ -5,8 +5,6 @@
 	padding: 4px 0 2px;
 }
 
-/* ── Barra de historial (undo / redo) ──────────────────────────────────────── */
-
 .cue-history-bar {
 	display: flex;
 	align-items: center;
@@ -40,8 +38,6 @@
 	color: #facc15;
 	letter-spacing: 0.04em;
 }
-
-/* ── Botones de acción principales ─────────────────────────────────────────── */
 
 .btn-reset {
 	background: var(--color-surface);
@@ -88,8 +84,6 @@
 	border-color: var(--color-playing);
 }
 
-/* ── Acciones de persistencia ──────────────────────────────────────────────── */
-
 .cue-persist-actions {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
@@ -112,8 +106,6 @@
 	color: var(--color-text-2);
 	border-style: solid;
 }
-
-/* ── Panel de carga de setlists ────────────────────────────────────────────── */
 
 .cue-load-panel {
 	background: var(--color-surface);
@@ -178,8 +170,6 @@
 	border-color: var(--color-border-2);
 	color: var(--color-text-2);
 }
-
-/* ── Modal guardar setlist ─────────────────────────────────────────────────── */
 
 .cue-save-modal-backdrop {
 	position: fixed;

@@ -9,17 +9,14 @@ import { BrowserRouter } from 'react-router';
 import './index.css';
 
 socket.on(EVENTS.SERVER.FULL_STATE, (state) => {
-	console.log('Recibido FULL_STATE', state);
 	useAbletonStore.setState(state);
 });
 
 socket.on(EVENTS.SERVER.STATE_UPDATE, (state) => {
-	console.log('Recibido STATE_UPDATE', state);
 	useAbletonStore.setState(state);
 });
 
 socket.on(EVENTS.SERVER.ABLETON_STATUS, (status) => {
-	console.log('Recibido ABLETON_STATUS', status);
 	useSocketStore.setState({ abletonConnected: status.connected });
 });
 

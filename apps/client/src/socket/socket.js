@@ -12,7 +12,6 @@ export const socket = io(socketPath);
 socket.on('connect', () => {
 	useSocketStore.setState({ isConnected: true });
 
-	// Resync con el servidor usando el último ID de evento que conocemos
 	const { lastEventId } = useAbletonStore.getState();
 	socket.emit(EVENTS.CLIENT.SYNC, lastEventId);
 });

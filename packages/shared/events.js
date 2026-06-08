@@ -9,7 +9,6 @@ export const EVENTS = {
 		PLAY_CUE: 'client:play_cue',
 		REFRESH: 'client:refresh',
 		SYNC: 'client:sync',
-		// Fase 4 — Gestión de Setlists Persistentes
 		FETCH_SETLISTS: 'client:fetch_setlists',
 		FETCH_SETLIST_BY_ID: 'client:fetch_setlist_by_id',
 		SAVE_SETLIST: 'client:save_setlist',

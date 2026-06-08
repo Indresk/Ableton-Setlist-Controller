@@ -2,12 +2,11 @@ import { createServer } from 'http';
 import app from './app.js';
 import { initSockets } from './sockets/index.js';
 import { initAbleton } from './services/ableton/boot.service.js';
+import { initStatePublisher } from './services/ableton/state-publisher.service.js';
 import { getIP } from './utils/getIP.js';
 import { logger } from './utils/logger.js';
 
-// ── Manejo de errores no capturados ──────────────────────────────────────────
-// Evita que el proceso quede en un estado corrupto/indeterminado.
-// Se registra el error como FATAL y se apaga el proceso para que PM2 lo reinicie de forma limpia.
+// Manejo de errores
 
 process.on('uncaughtException', (err) => {
 	logger.error('FATAL: uncaughtException', {
@@ -25,20 +24,22 @@ process.on('unhandledRejection', (reason) => {
 	process.exit(1);
 });
 
-// ── Arranque ─────────────────────────────────────────────────────────────────
+// Inicialización base
 
 const server = createServer(app);
-
 initSockets(server);
-initAbleton();
 
 const PORT = process.env.PORT ?? 3000;
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
 	const ip = getIP();
 	logger.info('Servidor iniciado', {
 		local: `http://localhost:${PORT}`,
 		network: `http://${ip}:${PORT}`,
 		health: `http://${ip}:${PORT}/health`,
 	});
+
+	await initStatePublisher();
+
+	initAbleton();
 });

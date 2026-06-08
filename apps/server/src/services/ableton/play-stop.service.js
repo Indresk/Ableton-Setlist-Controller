@@ -2,23 +2,8 @@ import { getState } from '../../state/ableton.state.js';
 import { continuePlaylist, jumpToTime, play } from './ableton.service.js';
 import { logger } from '../../utils/logger.js';
 
-/**
- * Guard contra ejecuciones concurrentes de comandos de playback.
- * Ableton no es transaccional — si llegan dos comandos play+jump simultáneos
- * pueden interferir entre sí y producir saltos al tiempo incorrecto.
- */
 let isExecuting = false;
 
-/**
- * Salta a la canción (y sección opcional) indicada y arranca la reproducción.
- *
- * El doble play() es intencional: Ableton requiere dos llamadas consecutivas
- * para arrancar correctamente desde un cue point cuando el transporte estaba detenido.
- * Si se llama una sola vez, en algunos escenarios Ableton empieza desde 0 en lugar
- * del punto de salto. Es un workaround documentado del comportamiento de ableton-js.
- *
- * @param {number | [number, number]} songIndex — índice de canción, o [canción, sección]
- */
 export async function playAt(songIndex) {
 	if (isExecuting) {
 		logger.warn('playAt ignorado: ya hay una operación de playback en curso');
@@ -60,20 +45,13 @@ export async function playAt(songIndex) {
 			time: newTime,
 		});
 
-		// Doble play() intencional — ver comentario arriba.
 		play();
-		// play();
 		if (newTime != null) await jumpToTime(newTime);
 	} finally {
 		isExecuting = false;
 	}
 }
 
-/**
- * Reanuda la reproducción desde la posición actual del transporte del servidor.
- *
- * El doble play() es intencional por el mismo motivo que en playAt.
- */
 export async function continuePlaying() {
 	if (isExecuting) {
 		logger.warn(

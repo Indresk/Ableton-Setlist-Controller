@@ -1,8 +1,6 @@
 import { Ableton } from 'ableton-js';
 import { logger } from '../../utils/logger.js';
 
-// Pasamos nuestro logger a ableton-js para que sus mensajes internos
-// sigan el mismo formato estructurado que el resto del servidor.
 export const ableton = new Ableton({ logger });
 
 export const play = async () => {

@@ -23,11 +23,9 @@ import { useCueHistory } from '../hooks/useCueHistory.js';
 import './CueContainer.css';
 
 export default function CueContainer() {
-	// ── Estado del servidor (fuente de verdad, sólo lectura aquí) ───────────
 	const songsCue = useAbletonStore((s) => s.songsCue);
 	const currentSong = useAbletonStore((s) => s.currentSong);
 
-	// ── Historial de trabajo local ───────────────────────────────────────────
 	const {
 		present,
 		set,
@@ -39,29 +37,23 @@ export default function CueContainer() {
 		canRedo,
 	} = useCueHistory(songsCue);
 
-	// Detectar si el workingState diverge del activeRuntimeState
 	const isDirty =
 		present !== songsCue &&
 		JSON.stringify(present) !== JSON.stringify(songsCue);
 
-	// Cuando el servidor actualiza el orden (otro cliente, Ableton, etc.),
-	// guardamos el draft actual en el historial y sincronizamos.
 	const prevSongsCue = useRef(songsCue);
 	useEffect(() => {
 		if (prevSongsCue.current !== songsCue) {
 			prevSongsCue.current = songsCue;
-			// Si el usuario tenía cambios locales, los preservamos en historial
 			syncFromRuntime(songsCue);
 		}
-	}, [songsCue]); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [songsCue]);
 
-	// ── Persistencia de setlists ─────────────────────────────────────────────
 	const [setlists, setSetlists] = useState([]);
 	const [showSaveModal, setShowSaveModal] = useState(false);
 	const [saveName, setSaveName] = useState('');
 	const [showLoadPanel, setShowLoadPanel] = useState(false);
 
-	// Cargar listado de setlists al abrir el panel
 	useEffect(() => {
 		if (showLoadPanel) {
 			socket.emit(EVENTS.CLIENT.FETCH_SETLISTS, (res) => {
@@ -70,7 +62,6 @@ export default function CueContainer() {
 		}
 	}, [showLoadPanel]);
 
-	// ── Sensores DnD ─────────────────────────────────────────────────────────
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
 			activationConstraint: { distance: 8 },
@@ -83,7 +74,6 @@ export default function CueContainer() {
 		}),
 	);
 
-	// ── Handlers ─────────────────────────────────────────────────────────────
 	function handleDragEnd({ active, over }) {
 		if (!over || active.id === over.id) return;
 		const oldIndex = present.findIndex((s) => s.id === active.id);
@@ -91,7 +81,6 @@ export default function CueContainer() {
 		set(arrayMove(present, oldIndex, newIndex));
 	}
 
-	// Aplica el workingState al servidor (lo convierte en activeRuntimeState)
 	function handleConfirmApply() {
 		socket.emit(EVENTS.CLIENT.SET_CUE, present, (res) => {
 			if (!res?.ok)
@@ -99,7 +88,6 @@ export default function CueContainer() {
 		});
 	}
 
-	// Guarda el workingState como setlist persistente con nombre
 	function handleSaveSetlist() {
 		socket.emit(
 			EVENTS.CLIENT.SAVE_SETLIST,
@@ -115,20 +103,18 @@ export default function CueContainer() {
 		);
 	}
 
-	// Carga un setlist de DB al workingState local (NO aplica al servidor)
 	function handleLoadSetlist(id) {
 		socket.emit(EVENTS.CLIENT.FETCH_SETLIST_BY_ID, id, (res) => {
 			if (!res?.ok) {
 				console.error('[CueContainer] Error al cargar setlist:', res?.error);
 				return;
 			}
-			// Reconciliar canciones de la DB con el songsCue actual usando el nombre
-			// (Los IDs de Ableton cambian entre sesiones o recargas del proyecto)
+
 			const abletonMap = new Map(songsCue.map((s) => [s.name, s]));
 			const loaded = res.data
 				.filter((row) => abletonMap.has(row.song_name))
 				.map((row) => abletonMap.get(row.song_name));
-			// Agregar al final canciones de Ableton que no estaban en el setlist guardado
+
 			const loadedNames = new Set(res.data.map((r) => r.song_name));
 			for (const song of songsCue) {
 				if (!loadedNames.has(song.name)) loaded.push(song);
@@ -138,7 +124,6 @@ export default function CueContainer() {
 		});
 	}
 
-	// ── Render ────────────────────────────────────────────────────────────────
 	return (
 		<>
 			<DndContext
@@ -160,7 +145,6 @@ export default function CueContainer() {
 				</SortableContext>
 			</DndContext>
 
-			{/* ── Barra de historial (undo/redo) ── */}
 			<div className='cue-history-bar'>
 				<button className='btn-history' onClick={undo} disabled={!canUndo}>
 					Deshacer
@@ -177,7 +161,6 @@ export default function CueContainer() {
 				</button>
 			</div>
 
-			{/* ── Acciones principales ── */}
 			<div className='cue-actions'>
 				<button
 					className='btn-reset'
@@ -199,7 +182,6 @@ export default function CueContainer() {
 				</button>
 			</div>
 
-			{/* ── Acciones de persistencia ── */}
 			<div className='cue-persist-actions'>
 				<button className='btn-persist' onClick={() => setShowSaveModal(true)}>
 					Guardar Setlist
@@ -211,7 +193,6 @@ export default function CueContainer() {
 				</button>
 			</div>
 
-			{/* ── Panel de carga de setlists ── */}
 			{showLoadPanel && (
 				<div className='cue-load-panel'>
 					<p className='load-panel-title'>Seleccionar Setlist Guardado</p>
@@ -240,7 +221,6 @@ export default function CueContainer() {
 				</div>
 			)}
 
-			{/* ── Modal guardar setlist ── */}
 			{showSaveModal && (
 				<div className='cue-save-modal-backdrop'>
 					<div className='cue-save-modal'>

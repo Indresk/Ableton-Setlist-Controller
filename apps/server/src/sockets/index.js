@@ -8,13 +8,9 @@ import { logger } from '../utils/logger.js';
 
 export const initSockets = (server) => {
 	const io = new Server(server, {
-		// CORS abierto para acceso desde dispositivos de la red local (LAN).
-		// Este sistema corre en localhost y se accede via IP local del router,
-		// por lo que '*' es aceptable y esperado en este contexto.
 		cors: { origin: '*' },
 	});
 
-	// Broadcaster de eventos de Ableton → todos los clientes conectados
 	registerAbletonBroadcaster(io);
 
 	io.on('connection', (socket) => {

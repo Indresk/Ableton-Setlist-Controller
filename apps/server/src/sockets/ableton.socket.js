@@ -11,49 +11,63 @@ import {
 	continuePlaying,
 	playAt,
 } from '../services/ableton/play-stop.service.js';
-import { database } from '../config/db.config.js';
-import { saveSetlist, listSetlists, loadSetlistById } from '../domain/db/setlist.repository.js';
-import { getEventsSince } from '../domain/db/event-log.repository.js';
+import { dbService } from '../services/db/db.service.js';
 import { logger } from '../utils/logger.js';
 
 export const registerAbletonHandlers = (io, socket) => {
-	// ── Sincronización inicial ────────────────────────────────────────────────
-	
-	socket.on(EVENTS.CLIENT.SYNC, (lastEventId) => {
+	// Sincronizar cliente / server
+
+	socket.on(EVENTS.CLIENT.SYNC, async (lastEventId) => {
 		logger.info('CLIENT.SYNC recibido', { clientId: socket.id, lastEventId });
-		
+
 		const currentState = getState();
-		
+
 		if (!lastEventId) {
-			// El cliente no tiene estado, enviamos todo
 			socket.emit(EVENTS.SERVER.FULL_STATE, currentState);
 			return;
 		}
-		
-		const events = getEventsSince(database, lastEventId);
-		
+
+		const events = await dbService.getEventsSince(lastEventId);
+
 		if (events.length === 0) {
-			// El cliente está al día, tal vez un FULL_STATE para asegurar
 			socket.emit(EVENTS.SERVER.FULL_STATE, currentState);
 		} else if (events.length > 50) {
-			// Hay demasiados eventos para replay, es más seguro enviar FULL_STATE
-			logger.info('CLIENT.SYNC: demasiados eventos, enviando FULL_STATE', { clientId: socket.id, missed: events.length });
+			logger.info('CLIENT.SYNC: demasiados eventos, enviando FULL_STATE', {
+				clientId: socket.id,
+				missed: events.length,
+			});
 			socket.emit(EVENTS.SERVER.FULL_STATE, currentState);
 		} else {
-			// Replay de eventos perdidos
-			logger.info('CLIENT.SYNC: haciendo replay de eventos', { clientId: socket.id, count: events.length });
+			logger.info('CLIENT.SYNC: haciendo replay de eventos', {
+				clientId: socket.id,
+				count: events.length,
+			});
 			for (const event of events) {
 				socket.emit(EVENTS.SERVER.STATE_UPDATE, event.payload);
 			}
 		}
 	});
 
-	// ── Comandos de transporte ────────────────────────────────────────────────
+	socket.on(EVENTS.CLIENT.REFRESH, async (ack) => {
+		logger.info('CLIENT.REFRESH: reenviando estado completo', {
+			clientId: socket.id,
+		});
+		patchAbletonState(getState());
+		ack?.({ ok: true });
+	});
+
+	//  Eventos de nueva información
 
 	socket.on(EVENTS.CLIENT.PLAY, async (songIndex, ack) => {
 		if (typeof songIndex !== 'number' && !Array.isArray(songIndex)) {
-			logger.warn('CLIENT.PLAY payload inválido', { songIndex, clientId: socket.id });
-			ack?.({ ok: false, error: 'songIndex debe ser un número o un array [canción, sección]' });
+			logger.warn('CLIENT.PLAY payload inválido', {
+				songIndex,
+				clientId: socket.id,
+			});
+			ack?.({
+				ok: false,
+				error: 'songIndex debe ser un número o un array [canción, sección]',
+			});
 			return;
 		}
 		logger.debug('CLIENT.PLAY recibido', { songIndex, clientId: socket.id });
@@ -75,7 +89,10 @@ export const registerAbletonHandlers = (io, socket) => {
 
 	socket.on(EVENTS.CLIENT.SET_TEMPO, async (tempo, ack) => {
 		if (typeof tempo !== 'number' || tempo < 20 || tempo > 999) {
-			logger.warn('CLIENT.SET_TEMPO payload inválido', { tempo, clientId: socket.id });
+			logger.warn('CLIENT.SET_TEMPO payload inválido', {
+				tempo,
+				clientId: socket.id,
+			});
 			ack?.({ ok: false, error: 'tempo debe ser un número entre 20 y 999' });
 			return;
 		}
@@ -84,10 +101,12 @@ export const registerAbletonHandlers = (io, socket) => {
 		ack?.({ ok: true });
 	});
 
-	// ── Gestión del setlist / cue ─────────────────────────────────────────────
+	// Eventos de setlist
 
 	socket.on(EVENTS.CLIENT.GET_CUE, async (ack) => {
-		logger.info('CLIENT.GET_CUE: recargando cue points desde Ableton', { clientId: socket.id });
+		logger.info('CLIENT.GET_CUE: recargando cue points desde Ableton', {
+			clientId: socket.id,
+		});
 		const songsCue = await getSongsCue();
 		patchAbletonState({ songsCue });
 		ack?.({ ok: true });
@@ -99,40 +118,28 @@ export const registerAbletonHandlers = (io, socket) => {
 			ack?.({ ok: false, error: 'songsCue debe ser un array' });
 			return;
 		}
-		
+
 		logger.info('CLIENT.SET_CUE: guardando nuevo orden de canciones', {
 			clientId: socket.id,
 			songs: songsCue.length,
 		});
 
-		// Aplicar el nuevo orden en memoria
 		patchAbletonState({ songsCue });
 
-		// Persistir en DB para sobrevivir reinicios
 		try {
-			saveSetlist(database, songsCue, 'last-saved');
+			await dbService.saveSetlist(songsCue, 'last-saved');
 			logger.info('Orden de canciones persistido en DB');
 		} catch (err) {
 			logger.error('Error al persistir orden en DB', { error: err.message });
-			// No es un error fatal: el orden está en memoria aunque falle la persistencia
 		}
 
 		ack?.({ ok: true });
 	});
 
-	socket.on(EVENTS.CLIENT.REFRESH, async (ack) => {
-		logger.info('CLIENT.REFRESH: reenviando estado completo', { clientId: socket.id });
-		patchAbletonState(getState());
-		ack?.({ ok: true });
-	});
-
-	// ── Gestión de Setlists Persistentes (Fase 4) ─────────────────────────────
-
-	// Listar todos los setlists guardados (sólo metadata: id, name, created_at)
-	socket.on(EVENTS.CLIENT.FETCH_SETLISTS, (ack) => {
+	socket.on(EVENTS.CLIENT.FETCH_SETLISTS, async (ack) => {
 		if (typeof ack !== 'function') return;
 		try {
-			const setlists = listSetlists(database);
+			const setlists = await dbService.listSetlists();
 			ack({ ok: true, data: setlists });
 		} catch (err) {
 			logger.error('Error al listar setlists', { error: err.message });
@@ -140,37 +147,45 @@ export const registerAbletonHandlers = (io, socket) => {
 		}
 	});
 
-	// Devolver las canciones de un setlist por ID (sólo lectura — no muta estado del servidor)
-	socket.on(EVENTS.CLIENT.FETCH_SETLIST_BY_ID, (id, ack) => {
+	socket.on(EVENTS.CLIENT.FETCH_SETLIST_BY_ID, async (id, ack) => {
 		if (typeof ack !== 'function') return;
 		if (!id || typeof id !== 'number') {
 			ack({ ok: false, error: 'id debe ser un número' });
 			return;
 		}
 		try {
-			const songs = loadSetlistById(database, id);
+			const songs = await dbService.loadSetlistById(id);
 			if (!songs) {
 				ack({ ok: false, error: `Setlist con id ${id} no encontrado` });
 				return;
 			}
 			ack({ ok: true, data: songs });
 		} catch (err) {
-			logger.error('Error al cargar setlist por ID', { error: err.message, id });
+			logger.error('Error al cargar setlist por ID', {
+				error: err.message,
+				id,
+			});
 			ack({ ok: false, error: 'Error al cargar setlist' });
 		}
 	});
 
-	// Guardar el workingState con un nombre (o sin nombre para usar timestamp automático)
 	socket.on(EVENTS.CLIENT.SAVE_SETLIST, async (payload, ack) => {
 		if (!payload || !Array.isArray(payload.songs)) {
-			logger.warn('CLIENT.SAVE_SETLIST payload inválido', { clientId: socket.id });
+			logger.warn('CLIENT.SAVE_SETLIST payload inválido', {
+				clientId: socket.id,
+			});
 			ack?.({ ok: false, error: 'payload.songs debe ser un array' });
 			return;
 		}
 		const { songs, name } = payload;
 		try {
-			const id = saveSetlist(database, songs, name);
-			logger.info('Setlist guardado desde cliente', { name: name || '(auto)', songs: songs.length, id, clientId: socket.id });
+			const id = await dbService.saveSetlist(songs, name);
+			logger.info('Setlist guardado desde cliente', {
+				name: name || '(auto)',
+				songs: songs.length,
+				id,
+				clientId: socket.id,
+			});
 			ack?.({ ok: true, data: { id } });
 		} catch (err) {
 			logger.error('Error al guardar setlist', { error: err.message });
@@ -179,11 +194,13 @@ export const registerAbletonHandlers = (io, socket) => {
 	});
 };
 
+// Eventos locales de ableton
+
 export const registerAbletonBroadcaster = (io) => {
 	abletonEventManager.on(ABLETON_EVENTS.STATE_CHANGE, (state) => {
 		io.emit(EVENTS.SERVER.STATE_UPDATE, state);
 	});
-	
+
 	abletonEventManager.on(ABLETON_EVENTS.STATUS_CHANGE, (isConnected) => {
 		io.emit(EVENTS.SERVER.ABLETON_STATUS, { connected: isConnected });
 	});

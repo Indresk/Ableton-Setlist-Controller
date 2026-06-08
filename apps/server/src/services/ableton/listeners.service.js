@@ -6,8 +6,6 @@ import { logger } from '../../utils/logger.js';
 
 let isBound = false;
 
-// ── Handlers de listener ─────────────────────────────────────────────────────
-
 const handleIsPlaying = (val) => {
 	logger.info('Ableton: is_playing cambió', { isPlaying: val });
 	patchAbletonState({ isPlaying: val });
@@ -18,18 +16,11 @@ const handleTempo = (val) => {
 	patchAbletonState({ tempo: val });
 };
 
-/**
- * Se dispara en cada tick de `current_song_time` de Ableton.
- * No logueamos aquí para no inundar los logs — el logging de beat
- * ocurre en playback-ticker solo cuando cambia el segundo entero.
- */
 const handleArrangementPosition = (time) => {
 	timePollingPerBeat(time);
 	playlistSeter(time);
 	playlistPlayer(time);
 };
-
-// ── Control de binding ───────────────────────────────────────────────────────
 
 export const bindAbletonListeners = () => {
 	if (isBound) return;
