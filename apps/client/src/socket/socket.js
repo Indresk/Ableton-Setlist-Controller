@@ -1,5 +1,7 @@
 import { io } from 'socket.io-client';
-import { useSocketStore } from '../store/socketStore';
+import { useSocketStore } from '../store/socketStore.js';
+import { useAbletonStore } from '../store/abletonStore.js';
+import { EVENTS } from '../../../../packages/shared/events.js';
 
 const socketPath = import.meta.env.DEV
 	? 'http://localhost:3000'
@@ -9,6 +11,9 @@ export const socket = io(socketPath);
 
 socket.on('connect', () => {
 	useSocketStore.setState({ isConnected: true });
+
+	const { lastEventId } = useAbletonStore.getState();
+	socket.emit(EVENTS.CLIENT.SYNC, lastEventId);
 });
 
 socket.on('disconnect', () => {

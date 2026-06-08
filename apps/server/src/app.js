@@ -5,12 +5,14 @@ import path from 'path';
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, '../../client', 'dist')));
+const clientDistPath = path.join(__dirname, '../../client', 'dist');
+app.use(express.static(clientDistPath));
 
 app.use(express.json());
 app.use('/health', healthRoute);
+
 app.get('/{*build}', (req, res) => {
-	res.sendFile(path.resolve('dist/index.html'));
+	res.sendFile(path.join(clientDistPath, 'index.html'));
 });
 
 export default app;

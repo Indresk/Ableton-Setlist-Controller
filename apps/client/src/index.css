@@ -7,27 +7,22 @@
 }
 
 :root {
-	/* Fondos */
 	--color-bg: #060c06;
 	--color-surface: #0e1c0e;
 	--color-surface-2: #162a16;
 
-	/* Bordes */
 	--color-border: #1e3d1e;
 	--color-border-2: #2d6329;
 
-	/* Estados visuales */
-	--color-playing: #a3e635; /* lime — play activo */
-	--color-current: #facc15; /* amber — canción en curso */
-	--color-section: #38bdf8; /* sky — sección activa */
-	--color-stop: #f87171; /* red — stop */
+	--color-playing: #a3e635;
+	--color-current: #facc15;
+	--color-section: #38bdf8;
+	--color-stop: #f87171;
 
-	/* Texto */
 	--color-text: #f0faf0;
 	--color-text-2: #86efac;
 	--color-text-muted: #4a7a4a;
 
-	/* Layout */
 	--touch-h: 62px;
 	--header-h: 65px;
 	--controls-h: 84px;

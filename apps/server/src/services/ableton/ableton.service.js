@@ -1,6 +1,7 @@
 import { Ableton } from 'ableton-js';
+import { logger } from '../../utils/logger.js';
 
-export const ableton = new Ableton({ logger: console });
+export const ableton = new Ableton({ logger });
 
 export const play = async () => {
 	await ableton.song.startPlaying();
@@ -20,3 +21,6 @@ export const jumpToTime = async (time) =>
 export const getRawCuePoints = async () => {
 	return await ableton.song.get('cue_points');
 };
+
+export const continuePlaylist = async () =>
+	await ableton.song.continuePlaying();
