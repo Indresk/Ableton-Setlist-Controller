@@ -3,8 +3,9 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import __dirname from '../../utils/dirname.js';
 import { logger } from '../../utils/logger.js';
+import sea from 'node:sea';
 
-const workerPath = process.env.IS_SEA
+const workerPath = sea.isSea()
 	? path.join(__dirname, 'db.worker.js')
 	: path.join(__dirname, '../src/db/db.worker.js');
 const worker = new Worker(workerPath);

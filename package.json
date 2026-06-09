@@ -11,16 +11,21 @@
 		"dev:client": "npm run dev --workspace=client",
 		"dev:server": "npm run dev --workspace=server",
 		"dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-		"build": "npm run build --workspace=client",
-		"start:server": "npm start --workspace=server",
-		"start:dev": "npm run build && npm run start:server",
-		"start": "npm run start:server"
+		"build:ui": "npm run build --workspace=client",
+		"start:dev": "npm run build:ui && npm start",
+		"start": "npm start --workspace=server",
+		"build:folder": "node ./scripts/build-folder.js",
+		"build:server": "esbuild apps/server/src/index.js --bundle --platform=node --format=cjs --outfile=build/server.js",
+		"build:worker": "esbuild apps/server/src/db/db.worker.js --bundle --platform=node --format=cjs --outfile=build/db.worker.js",
+		"build:sea": "node ./scripts/build-sea.js",
+		"build:desktop": "npm run build:ui && npm run build:folder && npm run build:server && npm run build:worker && npm run build:sea"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "Rafael Salcedo",
 	"license": "ISC",
 	"type": "module",
 	"devDependencies": {
-		"concurrently": "^9.2.1"
+		"concurrently": "^9.2.1",
+		"esbuild": "^0.28.0"
 	}
 }

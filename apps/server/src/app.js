@@ -2,10 +2,11 @@ import express from 'express';
 import healthRoute from './routes/health.route.js';
 import __dirname from './utils/dirname.js';
 import path from 'path';
+import sea from 'node:sea';
 
 const app = express();
 
-const clientDistPath = process.env.IS_SEA
+const clientDistPath = sea.isSea()
 	? path.join(__dirname, 'dist')
 	: path.join(__dirname, '../../client', 'dist');
 
