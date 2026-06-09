@@ -3,8 +3,9 @@ import { DatabaseSync } from 'node:sqlite';
 import { initSchema } from './schema.js';
 import path from 'node:path';
 import __dirname from '../utils/dirname.js';
+import sea from 'node:sea';
 
-const dbPath = process.env.IS_SEA
+const dbPath = sea.isSea()
 	? path.join(__dirname, 'setlist.db')
 	: path.join(__dirname, '../src/db/setlist.db');
 const db = new DatabaseSync(dbPath);

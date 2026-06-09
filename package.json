@@ -2,7 +2,7 @@
 	"name": "ableton-control",
 	"private": true,
 	"version": "1.0.0",
-	"description": "",
+	"description": "Ableton Setlist Controller is a project to manage live setlists in Arrangement View in Ableton Live focused on live performances. It is designed as a local web application to be used on devices connected to the same router.",
 	"workspaces": [
 		"apps/*",
 		"packages/*"
@@ -11,16 +11,28 @@
 		"dev:client": "npm run dev --workspace=client",
 		"dev:server": "npm run dev --workspace=server",
 		"dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-		"build": "npm run build --workspace=client",
-		"start:server": "npm start --workspace=server",
-		"start:dev": "npm run build && npm run start:server",
-		"start": "npm run start:server"
+		"build:ui": "npm run build --workspace=client",
+		"start:dev": "npm run build:ui && npm start",
+		"start": "npm start --workspace=server",
+		"build:folder": "node ./scripts/build-folder.js",
+		"build:server": "esbuild apps/server/src/index.js --bundle --platform=node --format=cjs --outfile=build/server.js",
+		"build:worker": "esbuild apps/server/src/db/db.worker.js --bundle --platform=node --format=cjs --outfile=build/db.worker.js",
+		"build:sea": "node ./scripts/build-sea.js",
+		"build:partial": "npm run build:ui && npm run build:folder && npm run build:server && npm run build:worker",
+		"build": "npm run build:ui && npm run build:folder && npm run build:server && npm run build:worker && npm run build:sea"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"keywords": [
+		"ableton",
+		"ableton-js",
+		"live-performances",
+		"musicians",
+		"automatization"
+	],
+	"author": "Rafael Salcedo",
+	"license": "MIT",
 	"type": "module",
 	"devDependencies": {
-		"concurrently": "^9.2.1"
+		"concurrently": "^9.2.1",
+		"esbuild": "^0.28.0"
 	}
 }

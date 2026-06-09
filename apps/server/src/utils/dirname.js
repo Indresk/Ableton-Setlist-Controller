@@ -1,9 +1,15 @@
 import path from 'path';
 import { fileURLToPath } from 'node:url';
+import sea from 'node:sea';
 
-const filename = fileURLToPath(import.meta.url);
-const __dirname = process.env.IS_SEA
-	? path.dirname(process.execPath)
-	: path.join(path.dirname(filename), '../');
+let dirCalculation = '';
+if (sea.isSea()) {
+	dirCalculation = path.dirname(process.execPath);
+} else {
+	const filename = fileURLToPath(import.meta.url);
+	dirCalculation = path.join(path.dirname(filename), '../');
+}
+
+const __dirname = dirCalculation;
 
 export default __dirname;

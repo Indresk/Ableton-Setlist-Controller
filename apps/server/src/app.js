@@ -2,11 +2,13 @@ import express from 'express';
 import healthRoute from './routes/health.route.js';
 import __dirname from './utils/dirname.js';
 import path from 'path';
+import sea from 'node:sea';
+import { extractUiAssets } from './utils/tempFilesGenerator.js';
 
 const app = express();
 
-const clientDistPath = process.env.IS_SEA
-	? path.join(__dirname, 'dist')
+const clientDistPath = sea.isSea()
+	? extractUiAssets()
 	: path.join(__dirname, '../../client', 'dist');
 
 app.use(express.static(clientDistPath));
