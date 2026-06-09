@@ -1,5 +1,7 @@
 # Development information
 
+Here is located all information related to the development of the project, including installation dev environment instructions, important design decisions, and known issues that need to be addressed.
+
 ## Development requirements
 
 - Ableton Live (the project was developed on Live 12 Lite but should work with other Live versions)
@@ -18,7 +20,7 @@
 - Persistence is handled via a dedicated worker to improve performance by decoupling client updates from DB updates: see [apps/server/src/db/db.worker.js](apps/server/src/db/db.worker.js#L1).
 - The SQLite schema enforces a uniqueness constraint on `(setlist_id, ableton_song_id)` in [apps/server/src/db/schema.js](apps/server/src/db/schema.js#L1).
 
-## Installation instructions
+## Dev installation instructions
 
 1. Install the AbletonJS MIDI Remote Script on the machine running Ableton Live:
    - Download the folder "midi-script" from the AbletonJS repository (or latest release if the version is v4.1.0+). GitHub repo: https://github.com/leolabs/ableton-js
@@ -74,6 +76,10 @@
      ```
 
 The server exposes a health endpoint at `/health` and starts on `PORT` (default 3000).
+
+## Windows build instructions
+
+To build the project we have two paths depending if you have Node 25.5+ with SEA module support or not, you can review it in the following doc: [docs/build.md](docs/build.md).
 
 ## Known issues and important TODOs
 
