@@ -7,6 +7,12 @@ Note: the build process is currently only in mind for Windows.
 
 With this steps the final .exe fill will have aprox ~15MB extra than the other build process due SEA module still in development.
 
+1. Run the following command to create the .exe file:
+
+   ```
+   npm run build
+   ```
+
 ## Build with Node without SEA full module support
 
 To follow this path you need previously install postject with:
