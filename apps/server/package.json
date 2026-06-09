@@ -2,15 +2,14 @@
 	"name": "server",
 	"private": true,
 	"version": "1.0.0",
-	"description": "",
+	"description": "Rafael Salcedo",
 	"main": "index.js",
 	"scripts": {
 		"dev": "node --watch ./src/index.js",
 		"start": "node ./src/index.js"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"author": "Rafael Salcedo",
+	"license": "MIT",
 	"type": "module",
 	"dependencies": {
 		"ableton-js": "^4.1.0",

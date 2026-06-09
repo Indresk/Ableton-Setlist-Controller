@@ -3,11 +3,12 @@ import healthRoute from './routes/health.route.js';
 import __dirname from './utils/dirname.js';
 import path from 'path';
 import sea from 'node:sea';
+import { extractUiAssets } from './utils/tempFilesGenerator.js';
 
 const app = express();
 
 const clientDistPath = sea.isSea()
-	? path.join(__dirname, 'dist')
+	? extractUiAssets()
 	: path.join(__dirname, '../../client', 'dist');
 
 app.use(express.static(clientDistPath));

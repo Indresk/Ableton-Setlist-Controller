@@ -1,12 +1,14 @@
-import { Worker } from 'node:worker_threads';
 import path from 'node:path';
-import { randomUUID } from 'node:crypto';
+import sea from 'node:sea';
+import crypto from 'node:crypto';
+import { Worker } from 'node:worker_threads';
+
 import __dirname from '../../utils/dirname.js';
 import { logger } from '../../utils/logger.js';
-import sea from 'node:sea';
+import { getBundledWorkerPath } from '../../utils/tempFilesGenerator.js';
 
 const workerPath = sea.isSea()
-	? path.join(__dirname, 'db.worker.js')
+	? getBundledWorkerPath()
 	: path.join(__dirname, '../src/db/db.worker.js');
 const worker = new Worker(workerPath);
 
@@ -38,7 +40,7 @@ worker.on('exit', (code) => {
 
 function executeDbTask(action, args = []) {
 	return new Promise((resolve, reject) => {
-		const id = randomUUID();
+		const id = crypto.randomUUID();
 		pendingPromises.set(id, { resolve, reject });
 		worker.postMessage({ id, action, args });
 	});

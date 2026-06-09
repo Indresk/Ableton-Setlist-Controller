@@ -17,6 +17,8 @@ npm install -d postject
 
 Then you can run the following steps:
 
+Note: You can follow the details on NodeJS documentation https://nodejs.org/api/single-executable-applications.html#notes
+
 1. Use the `build:partial` script to compile the initial files:
 
    ```

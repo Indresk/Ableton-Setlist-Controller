@@ -2,7 +2,7 @@
 	"name": "ableton-control",
 	"private": true,
 	"version": "1.0.0",
-	"description": "",
+	"description": "Ableton Setlist Controller is a project to manage live setlists in Arrangement View in Ableton Live focused on live performances. It is designed as a local web application to be used on devices connected to the same router.",
 	"workspaces": [
 		"apps/*",
 		"packages/*"
@@ -21,9 +21,15 @@
 		"build:partial": "npm run build:ui && npm run build:folder && npm run build:server && npm run build:worker",
 		"build:desktop": "npm run build:ui && npm run build:folder && npm run build:server && npm run build:worker && npm run build:sea"
 	},
-	"keywords": [],
+	"keywords": [
+		"ableton",
+		"ableton-js",
+		"live-performances",
+		"musicians",
+		"automatization"
+	],
 	"author": "Rafael Salcedo",
-	"license": "ISC",
+	"license": "MIT",
 	"type": "module",
 	"devDependencies": {
 		"concurrently": "^9.2.1",
